@@ -3,7 +3,7 @@
 A hubot script that saves links
 At the moment it supports local redis installations or redis togo service attached in Eroku
 
-See [`src/save-links.coffee`](src/save-links.coffee) for full documentation.
+See [`src/save-links.js`](src/save-links.js) for full documentation.
 
 ## Installation
 
