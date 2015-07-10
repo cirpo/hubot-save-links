@@ -1,7 +1,7 @@
 {
   "name": "hubot-save-links",
   "description": "A hubot script that saves links",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "cirpo <alessandro.cinelli@gmail.com>",
   "license": "MIT",
   "keywords": "hubot, links, hubot-scripts, persist",
