@@ -49,14 +49,14 @@ module.exports = function(robot) {
 
         if(reply) {
           var alreadySavedUrl =  JSON.parse(reply);
-          var alreadySavedUrlMsg = '#OLD dude! Posted on ' + alreadySavedUrl.date + ' by ' + alreadySavedUrl.user;
+          var alreadySavedUrlMsg = '#OLD dude! Already posted on ' + moment(alreadySavedUrl.date).format('DD MMM YYYY HH:mm')+ ' by ' + alreadySavedUrl.user;
 
           console.log('msg received');
           msg.send(alreadySavedUrlMsg);
         } else {
           var urlToSaveInfo = {
             user: msg.envelope.user.name,
-            date: moment().format(),
+            date: Date.now(),
             parsedUrl: url.parse(urlToSave)
           }
           var info = JSON.stringify(urlToSaveInfo);
