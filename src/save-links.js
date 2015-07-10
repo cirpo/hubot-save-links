@@ -12,6 +12,7 @@
 var redis = require('redis');
 var url = require('url');
 var moment = require('moment');
+var debug = require('debug')('save-links')
 
 var redisUrl = process.env.REDISTOGO_URL || 'redis://localhost:6379';
 var redisInfo = url.parse(redisUrl, true);
@@ -23,7 +24,7 @@ if (redisInfo.auth) {
 }
 
 client.on('connect', function() {
-    console.log('connected');
+    debug('connected to redis');
 });
 
 //found on stackoverflow, do you have better suggestions?
@@ -34,7 +35,7 @@ var urlRegex = new RegExp(
 
 module.exports = function(robot) {
   robot.hear(/[\s\S]*/, function(msg){
-    console.log('msg received:', msg.envelope.message.text);
+    debug('msg received: ' + msg.envelope.message.text);
 
     var message = msg.envelope.message.text;
     var links = message.match(urlRegex);
@@ -43,7 +44,7 @@ module.exports = function(robot) {
     if(urlToSave) {
       client.hget('hubot:links', urlToSave, function(err, reply){
         if(err) {
-          console.log(err);
+          debug(err);
           return;
         }
 
@@ -51,7 +52,7 @@ module.exports = function(robot) {
           var alreadySavedUrl =  JSON.parse(reply);
           var alreadySavedUrlMsg = '#OLD dude! Already posted on ' + moment(alreadySavedUrl.date).format('DD MMM YYYY HH:mm')+ ' by ' + alreadySavedUrl.user;
 
-          console.log('msg received');
+          debug(reply);
           msg.send(alreadySavedUrlMsg);
         } else {
           var urlToSaveInfo = {
@@ -60,7 +61,8 @@ module.exports = function(robot) {
             parsedUrl: url.parse(urlToSave)
           }
           var info = JSON.stringify(urlToSaveInfo);
-          console.log('saving url: ' + urlToSave, info);
+          debug('saving url: ' + urlToSave)
+          debug('url info: ' + info);
           client.hset('hubot:links', urlToSave, info);
         }
       });
