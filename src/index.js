@@ -10,7 +10,12 @@
 //   hubot check this: http://webdebs.org // it will save the url
 
 var saveLink = require('./hear/saveLink');
+var getLinks = require('./api');
 
 module.exports = function(robot) {
+
   robot.hear(/[\s\S]*/, saveLink);
+
+  robot.router.get('/links', getLinks);
+
 }

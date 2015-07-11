@@ -38,10 +38,11 @@ function isLinkAlreadySaved(link, msg, callback) {
 
 function createLinkInfo(link, msg){
   return {
-    url: link,
-    user: msg.envelope.user.name,
+    link: link,
+    postedBy: msg.envelope.user.name,
     date: Date.now(),
-    parsedUrl: url.parse(link)
+    parsedUrl: url.parse(link),
+    msg: msg.envelope
   }
 }
 
