@@ -1,10 +1,12 @@
 # Hubot-save-links
 
-A hubot script that saves links
+A hubot script that saves links and expose an api to retrieve them.
 At the moment it supports local redis installations or redis togo service attached in Eroku
 
-See [`src/save-links.js`](src/save-links.js) for full documentation.
+The links are available via GET /links (hubot has express inside :)
 
+See [`src/save-links.js`](src/save-links.js) for the bot script documentation.
+See  hubot scripting [documentation](https://hubot.github.com/docs/scripting/) for more info.
 
 ## Installation
 
@@ -58,3 +60,5 @@ Well, it's version 0.0.x, the functionality is small, will do for sure :P
 ## TODO
 
 Check the [open issues](https://github.com/cirpo/hubot-save-links/issues)
+Feel free to open issues for suggestions.
+Oh, lets start writing test :P
