@@ -11,7 +11,7 @@ function getLinks(req, res) {
     debug('totalLinks: ' + totalLinks);
 
     if(totalLinks) {
-      var totalPages = Math.round(totalLinks / linksPerPage);
+      var totalPages = Math.ceil(totalLinks / linksPerPage);
       var endRange = (page * linksPerPage) - 1;
       var startRange= (page * linksPerPage) - linksPerPage
 
