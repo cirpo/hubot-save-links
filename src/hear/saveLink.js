@@ -13,10 +13,10 @@ function saveLink(msg, client){
 
   var message = msg.envelope.message.text;
   var links = message.match(urlRegex);
-  var urlToSave = links ? links[0].trim() : null;
+  var link = links ? links[0].trim() : null;
 
-  if(urlToSave) {
-    client.hget('hubot:links', urlToSave, function(err, reply){
+  if(link) {
+    client.hget('hubot:links', link, function(err, reply){
       if(err) {
         debug(err);
         return;
@@ -29,15 +29,40 @@ function saveLink(msg, client){
         debug(reply);
         msg.send(alreadySavedUrlMsg);
       } else {
-        var urlToSaveInfo = {
+        var linkInfo = {
           user: msg.envelope.user.name,
           date: Date.now(),
-          parsedUrl: url.parse(urlToSave)
+          parsedUrl: url.parse(link)
         }
-        var info = JSON.stringify(urlToSaveInfo);
-        debug('saving url: ' + urlToSave)
+
+        var info = JSON.stringify(linkInfo);
+        var now = Date.now();
+
+        var linkInfo = {
+          url: link,
+          user: msg.envelope.user.name,
+          date: now,
+          parsedUrl: url.parse(link)
+        }
+        var info = JSON.stringify(linkInfo);
+
+        var multi = client.multi([
+            ["hset", "hubot:links:hash", link, info],
+            ["lpush", "hubot:links:list", info],
+            ["zadd", "hubot:links:sorted-set", now, info ]
+          ]
+        );
+
+        debug('saving url: ' + link);
         debug('url info: ' + info);
-        client.hset('hubot:links', urlToSave, info);
+
+        multi.exec(function (err, replies) {
+          if(err) {
+            debug(err);
+          }
+          debug('link ' + link + ' saved');
+          debug('link info: ' + info);
+        });
       }
     });
   }
