@@ -36,7 +36,7 @@ function getLinks(req, res) {
         resBody = {
           data: result,
           totalLinks: totalLinks,
-          linksPerPage: linksPerPage
+          linksPerPage: linksPerPage,
           pagination : pagination
         }
 
