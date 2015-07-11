@@ -1,6 +1,7 @@
 var url = require('url');
 var moment = require('moment');
 var debug = require('debug')('save-links');
+var client = require('./../redis')
 
 //found on stackoverflow, do you have better suggestions?
 var urlRegex = new RegExp(
@@ -8,39 +9,58 @@ var urlRegex = new RegExp(
   ,"g"
 );
 
-function saveLink(msg, client){
+function saveLink(msg){
   debug('msg received: ' + msg.envelope.message.text);
+  var links = msg.envelope.message.text.match(urlRegex);
+  var link = links ? links[0].trim() : null;
 
-  var message = msg.envelope.message.text;
-  var links = message.match(urlRegex);
-  var urlToSave = links ? links[0].trim() : null;
-
-  if(urlToSave) {
-    client.hget('hubot:links', urlToSave, function(err, reply){
-      if(err) {
-        debug(err);
-        return;
-      }
-
-      if(reply) {
-        var alreadySavedUrl =  JSON.parse(reply);
-        var alreadySavedUrlMsg = '#OLD dude! Already posted on ' + moment(alreadySavedUrl.date).format('DD MMM YYYY HH:mm')+ ' by ' + alreadySavedUrl.user;
-
-        debug(reply);
-        msg.send(alreadySavedUrlMsg);
-      } else {
-        var urlToSaveInfo = {
-          user: msg.envelope.user.name,
-          date: Date.now(),
-          parsedUrl: url.parse(urlToSave)
-        }
-        var info = JSON.stringify(urlToSaveInfo);
-        debug('saving url: ' + urlToSave)
-        debug('url info: ' + info);
-        client.hset('hubot:links', urlToSave, info);
-      }
-    });
+  if(link) {
+    isLinkAlreadySaved(link, msg, persist);
   }
+}
+
+function isLinkAlreadySaved(link, msg, callback) {
+  client.hget('hubot:links:hash', link, function(err, result){
+    if(err) {
+      debug(err);
+      return;
+    }
+
+    if(result) {
+      debug(result);
+      var alreadySavedLink = JSON.parse(result);
+      return msg.send('#OLD dude! Already posted on ' + moment(alreadySavedLink.date).format('DD MMM YYYY HH:mm')+ ' by ' + alreadySavedLink.user);
+    }
+
+    callback(link, msg);
+  });
+}
+
+function createLinkInfo(link, msg){
+  return {
+    url: link,
+    user: msg.envelope.user.name,
+    date: Date.now(),
+    parsedUrl: url.parse(link)
+  }
+}
+
+function persist(link, msg) {
+  var linkInfo = JSON.stringify(createLinkInfo(link, msg));
+  var multi = client.multi([
+      ["hset", "hubot:links:hash", link, linkInfo],
+      ["lpush", "hubot:links:list", linkInfo],
+      ["zadd", "hubot:links:sorted-set", linkInfo.date, linkInfo]
+    ]
+  );
+
+  multi.exec(function (err, replies) {
+    if(err) {
+      debug(err);
+    }
+    debug('link ' + link + ' saved');
+    debug('link info: ' + linkInfo);
+  });
 }
 
 module.exports = saveLink;
