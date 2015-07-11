@@ -7,8 +7,8 @@ module.exports = function(robot) {
   console.log('scriptsPath', scriptsPath);
   var scripts = fs.readdirSync(scriptsPath);
 
-  if(scripts.indexOf('save-links.js') > -1) {
+  if(scripts.indexOf('index.js') > -1) {
     debug('loading hubot-save-links');
-    robot.loadFile(scriptsPath, 'save-links.js');
+    robot.loadFile(scriptsPath, 'index.js');
   }
 }
