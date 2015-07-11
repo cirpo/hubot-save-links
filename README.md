@@ -53,7 +53,7 @@ DEBUG=* bin/hubot
 
 ## Test
 
-Well, it's version 0.0.6, the functionality is small, will do for sure :P
+Well, it's version 0.0.x, the functionality is small, will do for sure :P
 
 ## TODO
 
