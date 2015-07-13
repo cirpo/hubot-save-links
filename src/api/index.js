@@ -20,8 +20,15 @@ function getLinks(req, res) {
         if (err) {
           debug(err);
         }
+
         result.forEach(function(value, index, result){
-          result[index] = JSON.parse(value);
+          var link = JSON.parse(value);
+          if(link.msg.room) {
+            link.room = link.msg.room;
+            delete(link['msg']);
+          }
+
+          result[index] = link;
         });
 
         var pagination = {
