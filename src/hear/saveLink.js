@@ -29,8 +29,12 @@ function isLinkAlreadySaved(link, msg, callback) {
     if(result) {
       debug(result);
       var alreadySavedLink = JSON.parse(result);
-      console.log(alreadySavedLink);
-      return msg.send('#OLD dude! Already posted on ' + moment(alreadySavedLink.date).format('DD MMM YYYY HH:mm')+ ' by ' + alreadySavedLink.postedBy);
+
+      if (alreadySavedLink.msg.room === msg.envelope.room) {
+        msg.send('#OLD dude! Already posted on ' + moment(alreadySavedLink.date).format('DD MMM YYYY HH:mm') + ' by ' + alreadySavedLink.postedBy);
+      }
+
+      return;
     }
 
     callback(link, msg);
