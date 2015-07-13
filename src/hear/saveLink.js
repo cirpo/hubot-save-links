@@ -47,7 +47,8 @@ function createLinkInfo(link, msg){
     postedBy: msg.envelope.user.name,
     date: Date.now(),
     parsedUrl: url.parse(link),
-    msg: msg.envelope
+    msg: msg.envelope,
+    tags: extractTags(msg.envelope.message.text),
   }
 }
 
@@ -67,6 +68,10 @@ function persist(link, msg) {
     debug('link ' + link + ' saved');
     debug('link info: ' + linkInfo);
   });
+}
+
+function extractTags(msg) {
+  return msg.envelope.message.text.match(/#\w+/g);
 }
 
 module.exports = saveLink;
