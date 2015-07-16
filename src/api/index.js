@@ -5,6 +5,9 @@ var linksPerPage = 10;
 
 function getLinks(req, res) {
   var page = req.query.page ? req.query.page : 1;
+  page = pageInt(page, 10);
+  page = isNaN(page) ? 1 : page;
+
   console.log('page', page);
 
   client.llen('hubot:links:list', function(err, totalLinks){
