@@ -8,11 +8,7 @@ function getLinks(req, res) {
   page = parseInt(page, 10);
   page = isNaN(page) ? 1 : page;
 
-  console.log('page', page);
-
   client.llen('hubot:links:list', function(err, totalLinks){
-    debug('totalLinks: ' + totalLinks);
-
     if(totalLinks) {
       var totalPages = Math.ceil(totalLinks / linksPerPage);
       var endRange = (page * linksPerPage) - 1;
@@ -48,7 +44,9 @@ function getLinks(req, res) {
           linksPerPage: linksPerPage,
           pagination : pagination
         }
-
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Credentials', false);
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
         res.json(resBody);
       });
     }
