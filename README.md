@@ -1,4 +1,5 @@
-# Hubot-save-links
+# Hubot-save-links [![Build Status](https://travis-ci.org/cirpo/hubot-save-links.svg?branch=master)](https://travis-ci.org/cirpo/hubot-save-links)
+
 
 A hubot script that saves links and expose an api to retrieve them.
 At the moment it supports local redis installations or redis togo service attached in Eroku

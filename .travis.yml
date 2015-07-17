@@ -8,4 +8,4 @@ cache:
   directories:
     - node_modules
 notifications:
-  email: false
+  email: alessandro.cinelli@gmail.com
