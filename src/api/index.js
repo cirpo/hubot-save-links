@@ -19,7 +19,6 @@ function getLinks(req, res) {
       var startRange= (page * linksPerPage) - linksPerPage
 
       client.lrange('hubot:links:list', startRange, endRange , function(err, result){
-        debug(result);
         if (err) {
           debug(err);
         }
