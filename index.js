@@ -3,8 +3,7 @@ var path = require('path');
 var debug = require('debug')('save-links')
 
 module.exports = function(robot) {
-  var scriptsPath = path.resolve(__dirname, './src')
-  console.log('scriptsPath', scriptsPath);
+  var scriptsPath = path.resolve(__dirname, './src');
   var scripts = fs.readdirSync(scriptsPath);
 
   if(scripts.indexOf('index.js') > -1) {
