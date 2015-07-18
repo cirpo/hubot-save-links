@@ -9,3 +9,4 @@ cache:
     - node_modules
 notifications:
   email: alessandro.cinelli@gmail.com
+services: redis
