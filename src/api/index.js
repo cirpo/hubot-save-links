@@ -21,11 +21,12 @@ function getLinks(req, res) {
 
         result.forEach(function(value, index, result){
           var link = JSON.parse(value);
-          if(link.msg.room) {
+          if(link.msg  && link.msg.room ) {
             link.room = link.msg.room;
-            delete(link['msg']);
           }
 
+          delete(link['msg']);
+          
           result[index] = link;
         });
 
