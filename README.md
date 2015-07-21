@@ -42,7 +42,7 @@ The above links will be saved in redis
 
 ## Debug
 
-If you want a verbose logging on the console simply launch hubot with the env variable 
+If you want a verbose logging on the console simply launch hubot with the env variable
 DEBUG
 
 ```
@@ -56,7 +56,9 @@ DEBUG=* bin/hubot
 
 ## Test
 
-Well, it's version 0.0.x, the functionality is small, will do for sure :P
+```
+grunt test
+```
 
 ## TODO
 
