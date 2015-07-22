@@ -20,10 +20,10 @@ describe('save-links', function() {
       done();
     });
     robot.run();
-
   });
 
-  it('returns a message if a link was already inserted', function(done) {
+  it('returns a message if a link was already inserted and env variable OLD_ENABLED set to true', function(done) {
+    process.env['OLD_ENABLED'] = true;
     var link = 'http://example' + (new Date()).getTime() + '.com';
     adapter.receive(new TextMessage({}, link));
     adapter.on("send", function(envelope, strings) {
@@ -37,8 +37,6 @@ describe('save-links', function() {
 
     setTimeout(function(){
       adapter.receive(new TextMessage({}, link));
-    }, 1000)
-
+    }, 1000);
   })
-
 });
