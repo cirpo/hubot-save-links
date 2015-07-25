@@ -1,7 +1,7 @@
 var url = require('url');
 var moment = require('moment');
 var debug = require('debug')('save-links');
-var client = require('./../redis')
+var client = require('./../redis');
 
 //found on stackoverflow, do you have better suggestions?
 var urlRegex = new RegExp(
@@ -14,7 +14,7 @@ function saveLink(msg){
   var links = msg.envelope.message.text.match(urlRegex);
   var link = links ? links[0].trim() : null;
 
-  if(link) {
+  if(link && (url.parse(link)).hostname !== 'slack.com') {
     isLinkAlreadySaved(link, msg, persist);
   }
 }
@@ -29,7 +29,7 @@ function isLinkAlreadySaved(link, msg, callback) {
     if(result) {
       debug(result);
       var alreadySavedLink = JSON.parse(result);
-      
+
       if (alreadySavedLink.msg.room === msg.envelope.room && process.env.OLD_ENABLED) {
         msg.send('#OLD dude! Already posted on ' + moment(alreadySavedLink.date).format('DD MMM YYYY HH:mm') + ' by ' + alreadySavedLink.postedBy);
       }
@@ -49,7 +49,7 @@ function createLinkInfo(link, msg){
     parsedUrl: url.parse(link),
     msg: msg.envelope,
     tags: extractTags(msg),
-  }
+  };
 }
 
 function persist(link, msg) {
