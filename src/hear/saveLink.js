@@ -1,15 +1,16 @@
-var url = require('url');
+
 var moment = require('moment');
 var debug = require('debug')('save-links');
 var client = require('./../redis');
 var msgUtils = require('./../msgUtils');
+var urlUtils = require('./../urlUtils');
 
 function saveLink(msg){
   debug('msg received: ' + msg.envelope.message.text);
   var link = msgUtils.extractLinks(msg);
-  var parsedUrl = url.parse(link, true, true);
+  var parsedUrl = urlUtils.createParsedUrl(link);
 
-  if(parsedUrl.host && parsedUrl.hostname !== 'slack.com') {
+  if(parsedUrl) {
     isLinkAlreadySaved(parsedUrl, msg, persist);
   }
 }
