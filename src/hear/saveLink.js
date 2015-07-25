@@ -15,16 +15,9 @@ var debug = require('debug')('save-links');
 var client = require('./../redis');
 var msgUtils = require('./../msgUtils');
 
-//found on stackoverflow, do you have better suggestions?
-var urlRegex = new RegExp(
-  "(^|[ \t\r\n])((ftp|http|https|gopher|mailto|news|nntp|telnet|wais|file|prospero|aim|webcal):(([A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))"
-  ,"g"
-);
-
 function saveLink(msg){
   debug('msg received: ' + msg.envelope.message.text);
-  var links = msg.envelope.message.text.match(urlRegex);
-  var link = links ? links[0].trim() : null;
+  var link = msgUtils.extractLinks(msg);
 
   if(link && (url.parse(link)).hostname !== 'slack.com') {
     isLinkAlreadySaved(link, msg, persist);
