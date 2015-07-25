@@ -71,7 +71,14 @@ function persist(link, msg) {
 }
 
 function extractTags(msg) {
-  return msg.envelope.message.text.match(/#\w+/g);
+  var tags = msg.envelope.message.text.match(/ #\w+/g);
+  if(tags) {
+    tags.forEach(function(tag, index){
+      tags[index] = tag.trim();
+    });
+  }
+
+  return tags;
 }
 
 module.exports = saveLink;
