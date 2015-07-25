@@ -1,7 +1,19 @@
+/*
+- extract links
+- valid links?
+-- not slack.com
+-- check 200
+-- chech canonical
+- check if it's already there
+- if it's there eventually send the old message
+- if it's NOT there save it
+*/
+
 var url = require('url');
 var moment = require('moment');
 var debug = require('debug')('save-links');
 var client = require('./../redis');
+var msgUtils = require('./../msgUtils');
 
 //found on stackoverflow, do you have better suggestions?
 var urlRegex = new RegExp(
@@ -48,7 +60,7 @@ function createLinkInfo(link, msg){
     date: Date.now(),
     parsedUrl: url.parse(link),
     msg: msg.envelope,
-    tags: extractTags(msg),
+    tags: msgUtils.extractTags(msg)
   };
 }
 
@@ -68,17 +80,6 @@ function persist(link, msg) {
     debug('link ' + link + ' saved');
     debug('link info: ' + linkInfo);
   });
-}
-
-function extractTags(msg) {
-  var tags = msg.envelope.message.text.match(/ #\w+/g);
-  if(tags) {
-    tags.forEach(function(tag, index){
-      tags[index] = tag.trim();
-    });
-  }
-
-  return tags;
 }
 
 module.exports = saveLink;
