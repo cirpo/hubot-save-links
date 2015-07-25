@@ -1,26 +1,22 @@
-var url = require('url');
+
 var moment = require('moment');
 var debug = require('debug')('save-links');
 var client = require('./../redis');
-
-//found on stackoverflow, do you have better suggestions?
-var urlRegex = new RegExp(
-  "(^|[ \t\r\n])((ftp|http|https|gopher|mailto|news|nntp|telnet|wais|file|prospero|aim|webcal):(([A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))"
-  ,"g"
-);
+var msgUtils = require('./../msgUtils');
+var urlUtils = require('./../urlUtils');
 
 function saveLink(msg){
   debug('msg received: ' + msg.envelope.message.text);
-  var links = msg.envelope.message.text.match(urlRegex);
-  var link = links ? links[0].trim() : null;
+  var link = msgUtils.extractLinks(msg);
+  var parsedUrl = urlUtils.createParsedUrl(link);
 
-  if(link && (url.parse(link)).hostname !== 'slack.com') {
-    isLinkAlreadySaved(link, msg, persist);
+  if(parsedUrl) {
+    isLinkAlreadySaved(parsedUrl, msg, persist);
   }
 }
 
-function isLinkAlreadySaved(link, msg, callback) {
-  client.hget('hubot:links:hash', link, function(err, result){
+function isLinkAlreadySaved(parsedUrl, msg, callback) {
+  client.hget('hubot:links:hash', parsedUrl.href, function(err, result){
     if(err) {
       debug(err);
       return;
@@ -37,25 +33,25 @@ function isLinkAlreadySaved(link, msg, callback) {
       return;
     }
 
-    callback(link, msg);
+    callback(parsedUrl, msg);
   });
 }
 
-function createLinkInfo(link, msg){
+function createLinkInfo(parsedUrl, msg){
   return {
-    link: link,
+    link: parsedUrl.href,
     postedBy: msg.envelope.user.name,
     date: Date.now(),
-    parsedUrl: url.parse(link),
+    parsedUrl: parsedUrl,
     msg: msg.envelope,
-    tags: extractTags(msg),
+    tags: msgUtils.extractTags(msg)
   };
 }
 
-function persist(link, msg) {
-  var linkInfo = JSON.stringify(createLinkInfo(link, msg));
+function persist(parsedUrl, msg) {
+  var linkInfo = JSON.stringify(createLinkInfo(parsedUrl, msg));
   var multi = client.multi([
-      ["hset", "hubot:links:hash", link, linkInfo],
+      ["hset", "hubot:links:hash", parsedUrl.href, linkInfo],
       ["lpush", "hubot:links:list", linkInfo],
       ["zadd", "hubot:links:sorted-set", linkInfo.date, linkInfo]
     ]
@@ -65,20 +61,9 @@ function persist(link, msg) {
     if(err) {
       debug(err);
     }
-    debug('link ' + link + ' saved');
+    debug('link ' + parsedUrl.href + ' saved');
     debug('link info: ' + linkInfo);
   });
-}
-
-function extractTags(msg) {
-  var tags = msg.envelope.message.text.match(/ #\w+/g);
-  if(tags) {
-    tags.forEach(function(tag, index){
-      tags[index] = tag.trim();
-    });
-  }
-
-  return tags;
 }
 
 module.exports = saveLink;
