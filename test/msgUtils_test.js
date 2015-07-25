@@ -60,7 +60,7 @@ describe('msgUtils', function() {
 
     var link = msgUtils.extractLinks(msg);
 
-    assert.equal(null, link);
+    assert.equal('', link);
   });
 
 

@@ -23,7 +23,7 @@ function extractLinks(msg) {
     "g"
   );
   var links = msg.envelope.message.text.match(urlRegex);
-  var link = links ? links[0].trim() : null;
+  var link = links ? links[0].trim() : '';
 
   return link;
 }
