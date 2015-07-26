@@ -35,6 +35,22 @@ describe('msgUtils', function() {
     assert.equal('http://google.com/#hello', link);
   });
 
+  it('should extract multiple links from a message', function() {
+    var msg = {
+        envelope : {
+          message: {
+            text:  'http://google.com/#hello http://webdebs.org #tag #link #tag#intag'
+          }
+        }
+    };
+
+    var links = msgUtils.extractLinks(msg);
+    
+    assert.equal(links.length, 2)
+    assert.equal('http://google.com/#hello', links[0]);
+    assert.equal('http://webdebs.org', links[1]);
+  });
+
   it('should extract a link from a message', function() {
     var msg = {
         envelope : {

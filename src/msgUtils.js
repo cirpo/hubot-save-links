@@ -23,9 +23,12 @@ function extractLinks(msg) {
     "g"
   );
   var links = msg.envelope.message.text.match(urlRegex);
-  var link = links ? links[0].trim() : '';
+  links = links ? links : [];
+  links.forEach(function(link, index){
+    links[index] = link.trim();
+  });
 
-  return link;
+  return links;
 }
 
 module.exports = {
