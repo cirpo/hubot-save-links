@@ -1,12 +1,8 @@
 var chai = require('chai');
-var sinon = require('sinon');
-var sinonChai = require('sinon-chai');
 var path = require('path');
 var Robot = require("hubot/src/robot");
 var TextMessage = require("hubot/src/message").TextMessage;
-
-chai.use(sinonChai);
-var expect = chai.expect;
+var assert = chai.assert;
 
 describe('save-links', function() {
   var robot;
@@ -25,11 +21,13 @@ describe('save-links', function() {
   it('returns a message if a link was already inserted and env variable OLD_ENABLED set to true', function(done) {
     process.env['OLD_ENABLED'] = true;
     var link = 'http://example' + (new Date()).getTime() + '.com';
+    var totalMsgSent = 0;
     adapter.receive(new TextMessage({}, link));
     adapter.on("send", function(envelope, strings) {
       try {
-        expect(strings[0]).match(/^#OLD/);
-        done();
+        assert(strings[0].match(/^#OLD/));
+        totalMsgSent += 1;
+      //  done();
       } catch (err) {
         done(err)
       }
@@ -37,6 +35,15 @@ describe('save-links', function() {
 
     setTimeout(function(){
       adapter.receive(new TextMessage({}, link));
+    }, 500);
+
+    setTimeout(function(){
+      adapter.receive(new TextMessage({}, link));
     }, 1000);
+
+    setTimeout(function(){
+      assert.equal(totalMsgSent, 2);
+      done();
+    }, 1500);
   })
 });
