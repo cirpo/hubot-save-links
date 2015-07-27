@@ -12,18 +12,23 @@ function saveLink(msg){
 
   links.forEach(function(link) {
     var parsedUrl = urlUtils.createParsedUrl(link);
-    var savelinksPromise = isUrlAlreadySaved(parsedUrl).then(function(parsedUrl) {
-      if (parsedUrl.alreadySavedLink === undefined) {
-        return persist(createUrlInfo(parsedUrl, msg));
-      }
+    var savelinksPromise = isUrlAlreadySaved(parsedUrl)
+      .then(function(parsedUrl) {
+        if (parsedUrl.alreadySavedLink === undefined) {
+          return persist(createUrlInfo(parsedUrl, msg));
+        }
 
-      return  parsedUrl.alreadySavedLink;
-    });
+        return  parsedUrl.alreadySavedLink;
+      })
+      .catch(function(err){
+        debug(err);
+      });
 
     savelinksPromises.push(savelinksPromise);
   });
 
-  Promise.all(savelinksPromises).then(function(alreadySavedUrls) {
+  Promise.all(savelinksPromises)
+  .then(function(alreadySavedUrls) {
     _.remove(alreadySavedUrls, _.isUndefined);
 
     if(process.env.OLD_ENABLED) {
@@ -31,6 +36,9 @@ function saveLink(msg){
         msg.send('#OLD! ' + alreadySavedUrl.link + ' was already posted on '  + moment(alreadySavedUrl.date).format('DD MMM YYYY HH:mm') + ' by ' + alreadySavedUrl.postedBy);
       });
     }
+  })
+  .catch(function(err){
+    debug(err);
   });
 }
 
