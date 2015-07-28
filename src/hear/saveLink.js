@@ -12,6 +12,8 @@ function saveLink(msg){
 
   links.forEach(function(link) {
     var parsedUrl = urlUtils.createParsedUrl(link);
+    parsedUrl.slack = { message : { room : msg.envelope.room } };
+    
     var savelinksPromise = isUrlAlreadySaved(parsedUrl)
       .then(function(parsedUrl) {
         if (parsedUrl.alreadySavedLink === undefined) {
@@ -51,8 +53,11 @@ function isUrlAlreadySaved(parsedUrl) {
       }
 
       if(result) {
-        debug(result);
-        parsedUrl.alreadySavedLink = JSON.parse(result);
+        var alreadySavedLink = JSON.parse(result);
+
+        if(parsedUrl.slack.message.room === alreadySavedLink.msg.room) {
+          parsedUrl.alreadySavedLink = alreadySavedLink;
+        }
       }
 
       return resolve(parsedUrl);

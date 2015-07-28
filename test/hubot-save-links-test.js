@@ -21,29 +21,31 @@ describe('save-links', function() {
   it('returns a message if a link was already inserted and env variable OLD_ENABLED set to true', function(done) {
     process.env['OLD_ENABLED'] = true;
     var link = 'http://example' + (new Date()).getTime() + '.com';
-    var totalMsgSent = 0;
-    adapter.receive(new TextMessage({}, link));
+    var totalOldMsgSent = 0;
+    var user = {name: "gino", room: "#general"};
+    adapter.receive(new TextMessage(user, link));
+
     adapter.on("send", function(envelope, strings) {
       try {
         assert(strings[0].match(/^#OLD/));
-        totalMsgSent += 1;
-      //  done();
+        totalOldMsgSent += 1;
       } catch (err) {
         done(err)
       }
     });
 
     setTimeout(function(){
-      adapter.receive(new TextMessage({}, link));
-    }, 500);
+      adapter.receive(new TextMessage(user, link));
+    }, 200);
 
     setTimeout(function(){
-      adapter.receive(new TextMessage({}, link));
-    }, 1000);
+      user.room = '#foo';
+      adapter.receive(new TextMessage(user, link));
+    }, 400);
 
     setTimeout(function(){
-      assert.equal(totalMsgSent, 2);
+      assert.equal(totalOldMsgSent, 1, "Expecting  just one old message as the same link was posted twice in the #genaral channel and once in the #foo channel");
       done();
-    }, 1500);
+    }, 600);
   })
 });
