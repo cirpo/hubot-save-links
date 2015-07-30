@@ -19,6 +19,13 @@ describe('urlUtils', function() {
     assert.equal(parsedUrl, null);
   });
 
+  it('should not return a parsedUrl object from a giphy.com link', function() {
+    var link = 'http://giphy.com/whatever';
+    var parsedUrl = urlUtils.createParsedUrl(link);
+
+    assert.equal(parsedUrl, null);
+  });
+
   it('should not return a parsedUrl object from a invalid link', function() {
     var link = 'google.com';
     var parsedUrl = urlUtils.createParsedUrl(link);

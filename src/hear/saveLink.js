@@ -6,6 +6,7 @@ var urlUtils = require('./../urlUtils');
 var _ = require('lodash');
 
 function saveLink(msg){
+  debug(msg);
   debug('msg received: ' + msg.envelope.message.text);
   var links = msgUtils.extractLinks(msg);
   var savelinksPromises = [];
@@ -13,7 +14,7 @@ function saveLink(msg){
   links.forEach(function(link) {
     var parsedUrl = urlUtils.createParsedUrl(link);
     parsedUrl.slack = { message : { room : msg.envelope.room } };
-    
+
     var savelinksPromise = isUrlAlreadySaved(parsedUrl)
       .then(function(parsedUrl) {
         if (parsedUrl.alreadySavedLink === undefined) {
