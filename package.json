@@ -16,7 +16,8 @@
     "debug": "^2.2.0",
     "lodash": "^3.10.0",
     "moment": "^2.10.3",
-    "redis": "^0.12.1"
+    "redis": "^0.12.1",
+    "superagent": "^1.2.0"
   },
   "peerDependencies": {
     "hubot": "2.x"
@@ -34,13 +35,14 @@
     "hubot": "2.x",
     "hubot-mock-adapter": "^1.0.0",
     "matchdep": "~0.3.0",
-    "mocha": "^2.1.0"
+    "mocha": "^2.1.0",
+    "nock": "^2.10.0"
   },
   "main": "index.coffee",
   "scripts": {
     "test": "grunt test"
   },
-  "engines" : {
-    "node" : ">=0.12"
+  "engines": {
+    "node": ">=0.12"
   }
 }

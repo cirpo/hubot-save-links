@@ -12,16 +12,17 @@ function saveLink(msg){
   var savelinksPromises = [];
 
   links.forEach(function(link) {
-    var parsedUrl = urlUtils.createParsedUrl(link);
-    parsedUrl.slack = { message : { room : msg.envelope.room } };
-
-    var savelinksPromise = isUrlAlreadySaved(parsedUrl)
+    var savelinksPromise = urlUtils
+      .createParsedUrl(link)
       .then(function(parsedUrl) {
-        if (parsedUrl.alreadySavedLink === undefined) {
-          return persist(createUrlInfo(parsedUrl, msg));
-        }
-
-        return  parsedUrl.alreadySavedLink;
+        parsedUrl.slack = { message : { room : msg.envelope.room } };
+        return isUrlAlreadySaved(parsedUrl)
+          .then(function(parsedUrl) {
+            if (parsedUrl.alreadySavedLink === undefined) {
+              return persist(createUrlInfo(parsedUrl, msg));
+            }
+            return  parsedUrl.alreadySavedLink;
+          })
       })
       .catch(function(err){
         debug(err);
@@ -31,18 +32,18 @@ function saveLink(msg){
   });
 
   Promise.all(savelinksPromises)
-  .then(function(alreadySavedUrls) {
-    _.remove(alreadySavedUrls, _.isUndefined);
+    .then(function(alreadySavedUrls) {
+      _.remove(alreadySavedUrls, _.isUndefined);
 
-    if(process.env.OLD_ENABLED) {
-      alreadySavedUrls.forEach(function(alreadySavedUrl){
-        msg.send('#OLD! ' + alreadySavedUrl.link + ' was already posted on '  + moment(alreadySavedUrl.date).format('DD MMM YYYY HH:mm') + ' by ' + alreadySavedUrl.postedBy);
-      });
-    }
-  })
-  .catch(function(err){
-    debug(err);
-  });
+      if(process.env.OLD_ENABLED) {
+        alreadySavedUrls.forEach(function(alreadySavedUrl){
+          msg.send('#OLD! ' + alreadySavedUrl.link + ' was already posted on '  + moment(alreadySavedUrl.date).format('DD MMM YYYY HH:mm') + ' by ' + alreadySavedUrl.postedBy);
+        });
+      }
+    })
+    .catch(function(err){
+      debug(err);
+    });
 }
 
 function isUrlAlreadySaved(parsedUrl) {
@@ -60,7 +61,7 @@ function isUrlAlreadySaved(parsedUrl) {
           parsedUrl.alreadySavedLink = alreadySavedLink;
         }
       }
-
+      debug('parsedUrl.alreadySavedLink', parsedUrl.alreadySavedLink);
       return resolve(parsedUrl);
     });
   });

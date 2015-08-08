@@ -1,5 +1,6 @@
 var chai = require('chai');
 var path = require('path');
+var nock = require('nock');
 var Robot = require("hubot/src/robot");
 var TextMessage = require("hubot/src/message").TextMessage;
 var assert = chai.assert;
@@ -16,11 +17,14 @@ describe('save-links', function() {
       done();
     });
     robot.run();
+
+    nock.cleanAll.bind(nock);
   });
 
   it('returns a message if a link was already inserted and env variable OLD_ENABLED set to true', function(done) {
     process.env['OLD_ENABLED'] = true;
     var link = 'http://example' + (new Date()).getTime() + '.com';
+    nock(link).get('/').times(3).reply(200, 'OK');
     var totalOldMsgSent = 0;
     var user = {name: "gino", room: "#general"};
     adapter.receive(new TextMessage(user, link));
