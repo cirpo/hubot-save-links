@@ -1,10 +1,10 @@
 var chai = require('chai');
 var assert = chai.assert;
-var msgUtils = require('./../src/msgUtils');
+var msgs = require('./../src/msgs');
 chai.should();
 chai.use(require('chai-things'));
 
-describe('msgUtils', function() {
+describe('msgs', function() {
   it('should extract tags from a message', function() {
     var msg = {
         envelope : {
@@ -14,7 +14,7 @@ describe('msgUtils', function() {
         }
     };
 
-    var tags = msgUtils.extractTags(msg);
+    var tags = msgs.extractTags(msg);
 
     assert(tags.length, 2);
     tags.should.include('#link');
@@ -30,7 +30,7 @@ describe('msgUtils', function() {
         }
     };
 
-    var link = msgUtils.extractLinks(msg);
+    var link = msgs.extractLinks(msg);
 
     assert.equal('http://google.com/#hello', link);
   });
@@ -44,8 +44,8 @@ describe('msgUtils', function() {
         }
     };
 
-    var links = msgUtils.extractLinks(msg);
-    
+    var links = msgs.extractLinks(msg);
+
     assert.equal(links.length, 2)
     assert.equal('http://google.com/#hello', links[0]);
     assert.equal('http://webdebs.org', links[1]);
@@ -60,7 +60,7 @@ describe('msgUtils', function() {
         }
     };
 
-    var link = msgUtils.extractLinks(msg);
+    var link = msgs.extractLinks(msg);
 
     assert.equal('http://google.com/#hello', link);
   });
@@ -74,7 +74,7 @@ describe('msgUtils', function() {
         }
     };
 
-    var link = msgUtils.extractLinks(msg);
+    var link = msgs.extractLinks(msg);
 
     assert.equal('', link);
   });

@@ -1,18 +1,18 @@
 var moment = require('moment');
 var debug = require('debug')('save-links');
 var client = require('./../redis');
-var msgUtils = require('./../msgUtils');
-var urlUtils = require('./../urlUtils');
+var msgs = require('./../msgs');
+var urls = require('./../urls');
 var _ = require('lodash');
 
 function saveLink(msg){
   debug(msg);
   debug('msg received: ' + msg.envelope.message.text);
-  var links = msgUtils.extractLinks(msg);
+  var links = msgs.extractLinks(msg);
   var savelinksPromises = [];
 
   links.forEach(function(link) {
-    var savelinksPromise = urlUtils
+    var savelinksPromise = urls
       .createParsedUrl(link)
       .then(function(parsedUrl) {
         parsedUrl.slack = { message : { room : msg.envelope.room } };
@@ -74,7 +74,7 @@ function createUrlInfo(parsedUrl, msg) {
     date: Date.now(),
     parsedUrl: parsedUrl,
     msg: msg.envelope,
-    tags: msgUtils.extractTags(msg)
+    tags: msgs.extractTags(msg)
   };
 }
 
