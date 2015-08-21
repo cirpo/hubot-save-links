@@ -11,10 +11,13 @@
 
 var saveLink = require('./hear/saveLink');
 var getLinks = require('./api');
+var migrate = require('./migrate')
 
 module.exports = function(robot) {
 
   robot.hear(/[\s\S]*/, saveLink);
+  // robot.respond('/migrate/', migrate.migrate);
+  // robot.respond('/deleteKeys/', migrate.deleteKeys);
 
   robot.router.get('/links', getLinks);
 
