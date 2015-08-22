@@ -9,8 +9,8 @@
 //   hubot ciao //nothing get saved
 //   hubot check this: http://webdebs.org // it will save the url
 
-var saveLink = require('./hear/saveLink');
-var getLinks = require('./api');
+var saveLink = require('./hear');
+var api = require('./api');
 var migrate = require('./migrate')
 
 module.exports = function(robot) {
@@ -19,6 +19,7 @@ module.exports = function(robot) {
   // robot.respond('/migrate/', migrate.migrate);
   // robot.respond('/deleteKeys/', migrate.deleteKeys);
 
-  robot.router.get('/links', getLinks);
+  robot.router.get('/links', api.getLatestLinks);
+  robot.router.get('/links/tag/:tag', api.getLinksByTag);
 
 }

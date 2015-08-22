@@ -8,7 +8,7 @@ var _ = require('lodash');
 
 function saveLink(msg){
   debug(msg);
-  debug('msg received: ' + msg.envelope.message.text);
+
   var links = msgs.extractLinks(msg);
   var savelinksPromises = [];
 
@@ -48,6 +48,7 @@ function saveLink(msg){
 }
 
 function isUrlAlreadySaved(parsedUrl) {
+  debug('isUrlAlreadySaved')
   return new Promise(function(resolve, reject) {
     client.hget('hubot:saveLinks:links', parsedUrl.href, function(err, linkId){
       if(err) {
@@ -96,7 +97,6 @@ function persist(linkInfo) {
   var link = linkInfo.link;
 
   client.incr('hubot:saveLinks:links:lastId', function(err,linkId) {
-    rdebug(linkInfo);
     var redisCommands = [
         //links
         ["hset", "hubot:saveLinks:links",linkId, JSON.stringify(linkInfo)],
@@ -111,7 +111,8 @@ function persist(linkInfo) {
     ];
 
     linkInfo.tags.forEach(function(tag, index){
-        redisCommands.push(["lpush", "hubot:saveLinks:links:tag:" + tag,linkId]);
+        debug('TAG! ' + tag)
+        redisCommands.push(["lpush", "hubot:saveLinks:links:tag:" + tag, linkId]);
     });
 
    debug(redisCommands);
