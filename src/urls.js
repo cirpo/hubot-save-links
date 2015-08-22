@@ -1,7 +1,7 @@
 var url = require('url');
 var request = require('superagent');
 var debug = require('debug')('url-utils');
-var domainBlackList = ['slack.com', 'giphy.com']
+var domainBlackList = ['slack.com', 'giphy.com'];
 
 function createParsedUrl(link) {
   return isAvailable(link)
@@ -12,7 +12,7 @@ function validate(resolvedLink) {
   var parsedDestinationUrl = url.parse(resolvedLink.url, true, true);
   if (isValid(parsedDestinationUrl)) {
     return parsedDestinationUrl;
-  } else { 
+  } else {
     throw new Error('resolvedLink is not valid!');
   }
 }
@@ -30,7 +30,7 @@ function isAvailable(link) {
           }
           debug('parsedUrl is available at', lastRedirectUrl);
           resolve({
-            url: lastRedirectUrl, 
+            url: lastRedirectUrl,
             body: res.body
           });
         } else {
@@ -47,4 +47,4 @@ function isValid(parsedUrl){
 
 module.exports = {
   createParsedUrl: createParsedUrl
-}
+};
